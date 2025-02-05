@@ -1,4 +1,5 @@
 import requests
+import os
 from bs4 import BeautifulSoup
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
@@ -11,15 +12,23 @@ URL = "https://www.whitehouse.gov/presidential-actions/"
 last_order_title = None  
 
 def check_for_new_executive_orders():
-    global last_order_title
+    # File to store the last known executive order title
+    LAST_TITLE_FILE = "last_executive_order.txt"
+
+    # Read the last stored title (if it exists)
+    last_order_title = None
+    if os.path.exists(LAST_TITLE_FILE):
+        with open(LAST_TITLE_FILE, "r") as file:
+            last_order_title = file.read().strip()
+
     response = requests.get(URL)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Find all executive orders on the page
-    latest_order = soup.find("li", class_="wp-block-post")  # Find first executive order entry
+    # Find the latest executive order
+    latest_order = soup.find("li", class_="wp-block-post")
     if latest_order:
         title_tag = latest_order.find("h2", class_="wp-block-post-title has-heading-4-font-size")
-        link_tag = title_tag.find("a") if title_tag else None  # Extract the link from <a> inside <h2>
+        link_tag = title_tag.find("a") if title_tag else None
 
         if title_tag and link_tag:
             title = title_tag.text.strip()
@@ -27,10 +36,20 @@ def check_for_new_executive_orders():
 
             # Only send notification if a new executive order is detected
             if title != last_order_title:
-                last_order_title = title  # Update last order
+                print(f"✅ New Executive Order detected: {title}")
+                
+                # Update the stored title
+                with open(LAST_TITLE_FILE, "w") as file:
+                    file.write(title)
+
+                # Fetch and summarize the text
                 full_text = fetch_executive_order_text(link)
                 summary = summarize_executive_order(full_text)
                 send_notifications(title, link, summary)
+            else:
+                print("⚠️ No new executive orders detected. Skipping notification.")
+    else:
+        print("⚠️ No executive orders found on the webpage.")
 
 def fetch_executive_order_text(link):
     """Fetches the full text of the executive order from the White House website."""
