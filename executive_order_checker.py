@@ -19,12 +19,21 @@ def check_for_new_executive_orders():
     if latest_order:
         title = latest_order.find("h2").text.strip()
         link = latest_order.find("a")["href"]
-        
-        # 🔥 TEST MODE: Always send a notification (even if it's the same order)
-        last_order_title = title  # Store last checked order
-        full_text = fetch_executive_order_text(link)
-        summary = summarize_executive_order(full_text)
-        send_notifications(title, link, summary)  # Force notification for testing
+
+        print(f"🔍 Found Executive Order: {title} ({link})")
+
+        # Only send notification if a new executive order is detected
+        if title != last_order_title:
+            print(f"✅ New Executive Order detected: {title}")
+            last_order_title = title  # Update last order
+            full_text = fetch_executive_order_text(link)
+            summary = summarize_executive_order(full_text)
+            send_notifications(title, link, summary)
+        else:
+            print("⚠️ No new executive orders detected. Skipping notification.")
+    else:
+        print("⚠️ No executive orders found on the webpage.")
+
 
 def fetch_executive_order_text(link):
     """Fetches the full text of the executive order from the White House website."""
