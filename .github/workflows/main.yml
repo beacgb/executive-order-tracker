@@ -1,3 +1,22 @@
+jobs:
+  run-tracker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install tensorflow==2.0  # Install TensorFlow if it's required
+
+      - name: Run tracker script
+        run: python executive_order_checker.py
 name: Check for Executive Orders
 
 on:
