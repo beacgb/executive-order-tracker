@@ -13,7 +13,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install tensorflow==2.0  # Install TensorFlow if it's required
+          pip install torch==1.9.0  # Install PyTorch if it's required
 
       - name: Run tracker script
         run: python executive_order_checker.py
