@@ -1,40 +1,32 @@
+name: Executive Order Tracker
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Runs every 5 minutes
+  workflow_dispatch:  # Allows manual triggering
+
 jobs:
   run-tracker:
     runs-on: ubuntu-latest
     steps:
+      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
+      # Install dependencies including PyTorch, TensorFlow, and Flax
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install torch==1.9.0  # Install PyTorch if it's required
+          pip install -r requirements.txt  # Install from your requirements.txt file
+          pip install torch==1.9.0  # Install PyTorch
+          pip install tensorflow==2.0  # Install TensorFlow
+          pip install flax  # Install Flax
 
+      # Run the executive order tracker script
       - name: Run tracker script
-        run: python executive_order_checker.py
-name: Check for Executive Orders
-
-on:
-  schedule:
-    - cron: "0 * * * *"  # Runs every 5 minutes
-  workflow_dispatch:
-
-jobs:
-  run-script:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.x"
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4 transformers
-      - name: Run script
         run: python executive_order_checker.py
