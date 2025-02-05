@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests  # Ensure requests is installed          
-          pip install torch==1.9.0  # Install PyTorch
+          pip install torch>=2.0.0  # Install the latest version of PyTorch 2.x
           pip install flax  # Install Flax
           pip install beautifulsoup4  # Ensure beautifulsoup4 is installed
           pip install transformers
