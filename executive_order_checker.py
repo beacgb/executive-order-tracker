@@ -20,7 +20,6 @@ def check_for_new_executive_orders():
         title = latest_order.find("h2").text.strip()
         link = latest_order.find("a")["href"]
         
-        if title != last_order_title:  # Only notify if it's new
             last_order_title = title
             full_text = fetch_executive_order_text(link)
             summary = summarize_executive_order(full_text)
