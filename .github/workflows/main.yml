@@ -25,6 +25,8 @@ jobs:
           pip install requests  # Ensure requests is installed          
           pip install torch==1.9.0  # Install PyTorch
           pip install flax  # Install Flax
+          pip install beautifulsoup4  # Ensure beautifulsoup4 is installed
+
 
       # Run the executive order tracker script
       - name: Run tracker script
