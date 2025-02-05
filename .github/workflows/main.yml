@@ -31,7 +31,7 @@ jobs:
       # Install only required dependencies
       - name: Install dependencies
         run: |
-          pip install --prefer-binary requests beautifulsoup4 sumy nltk
+          pip install --prefer-binary requests beautifulsoup4 sumy nltk numpy
           python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab')"  # Download missing NLTK data
 
       # Run the executive order tracker script
