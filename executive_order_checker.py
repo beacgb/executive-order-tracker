@@ -54,6 +54,7 @@ def summarize_executive_order(text):
 
 def send_notifications(title, link, summary):
     """Sends notifications with the executive order summary."""
+    print(f"📨 Sending notifications for: {title}")
     send_discord_notification(title, link, summary)
     send_email_notification(title, link, summary)
 
