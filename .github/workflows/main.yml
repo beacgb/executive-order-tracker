@@ -22,7 +22,6 @@ jobs:
       # Install dependencies including PyTorch, TensorFlow, and Flax
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # Install from your requirements.txt file
           pip install torch==1.9.0  # Install PyTorch
           pip install tensorflow==2.0  # Install TensorFlow
           pip install flax  # Install Flax
