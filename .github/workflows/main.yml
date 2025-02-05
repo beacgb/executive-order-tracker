@@ -1,0 +1,21 @@
+name: Check for Executive Orders
+
+on:
+  schedule:
+    - cron: "0 * * * *"  # Runs every 5 minutes
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 transformers
+      - name: Run script
+        run: python executive_order_checker.py
