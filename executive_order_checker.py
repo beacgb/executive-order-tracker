@@ -55,6 +55,7 @@ def summarize_executive_order(text):
 def send_notifications(title, link, summary):
     """Sends notifications with the executive order summary."""
     send_discord_notification(title, link, summary)
+    send_email_notification(title, link, summary)
 
 def send_discord_notification(title, link, summary):
     """Sends a Discord notification with the executive order summary."""
@@ -62,5 +63,29 @@ def send_discord_notification(title, link, summary):
     payload = {"content": f"📜 **New Executive Order:** {title}\n🔗 {link}\n\n📌 **Summary:** {summary}"}
     requests.post(webhook_url, json=payload)
 
+def send_email_notification(title, link, summary):
+    """Sends an email notification with the executive order summary."""
+    import smtplib
+    from email.message import EmailMessage
+
+    sender = "beatricecgomes@gmail.com"
+    receiver = "tjandring4@gmail.com"
+    password = "pvcy dhwm smzb xwew"  # Use an app password from Google settings
+
+    subject = "New Executive Order Signed"
+    body = f"📜 {title}\n🔗 Read more: {link}\n\n📌 Summary:\n{summary}"
+
+    msg = EmailMessage()
+    msg.set_content(body)
+    msg["Subject"] = subject
+    msg["From"] = sender
+    msg["To"] = receiver
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender, password)
+            server.send_message(msg)
+    except Exception:
+        pass
 # Run the check
 check_for_new_executive_orders()
