@@ -19,16 +19,19 @@ jobs:
         with:
           python-version: '3.9'
 
-      # Install dependencies including PyTorch, TensorFlow, and Flax
+      # Cache Python dependencies
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('.github/workflows/executive_order_tracker.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Install dependencies manually (without requirements.txt)
       - name: Install dependencies
         run: |
-          pip install requests  # Ensure requests is installed          
-          pip install torch>=2.0.0  # Install the latest version of PyTorch 2.x
-          pip install "numpy<2"  # Force downgrade to NumPy 1.x
-          pip install flax  # Install Flax
-          pip install beautifulsoup4  # Ensure beautifulsoup4 is installed
-          pip install transformers
-
+          pip install --prefer-binary requests beautifulsoup4 transformers "torch>=2.0.0" flax "numpy<2"
 
       # Run the executive order tracker script
       - name: Run tracker script
