@@ -19,16 +19,12 @@ jobs:
         with:
           python-version: '3.9'
 
-      # Install compatible version of NumPy (below 2.0)
-      - name: Install compatible NumPy version
-        run: |
-          pip install numpy==1.23.5  # Install NumPy 1.x, which is compatible with other libraries
-
       # Install dependencies including PyTorch, TensorFlow, and Flax
       - name: Install dependencies
         run: |
           pip install requests  # Ensure requests is installed          
           pip install torch>=2.0.0  # Install the latest version of PyTorch 2.x
+          pip install "numpy<2"  # Force downgrade to NumPy 1.x
           pip install flax  # Install Flax
           pip install beautifulsoup4  # Ensure beautifulsoup4 is installed
           pip install transformers
