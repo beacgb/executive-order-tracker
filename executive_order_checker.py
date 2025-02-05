@@ -58,7 +58,7 @@ def send_notifications(title, link, summary):
 
 def send_discord_notification(title, link, summary):
     """Sends a Discord notification with the executive order summary."""
-    webhook_url = "YOUR_DISCORD_WEBHOOK_URL"  # Replace with your actual webhook URL
+    webhook_url = "https://discord.com/api/webhooks/1336551442294640670/sUIcxlIUHf94JWXSIJ7BNglsVOqMhm3znuCpT-jFRRZgwROKu7zuIVuyNyZqIvNBc4O3"  # Replace with your actual webhook URL
     payload = {"content": f"📜 **New Executive Order:** {title}\n🔗 {link}\n\n📌 **Summary:** {summary}"}
     requests.post(webhook_url, json=payload)
 
