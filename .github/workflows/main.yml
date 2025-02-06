@@ -33,7 +33,23 @@ jobs:
         run: |
           pip install --prefer-binary requests beautifulsoup4 sumy nltk numpy
           python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab')"  # Download missing NLTK data
-
+      
+      # Cache last detected executive order title
+      - name: Restore last executive order title
+        uses: actions/cache@v3
+        with:
+          path: last_executive_order.txt
+          key: executive-order-${{ github.run_id }}
+          restore-keys: |
+            executive-order-
+      
       # Run the executive order tracker script
       - name: Run tracker script
         run: python executive_order_checker.py
+      
+      # Cache the last detected order after script execution
+      - name: Save last executive order title
+        uses: actions/cache@v3
+        with:
+          path: last_executive_order.txt
+          key: executive-order-${{ github.run_id }}
