@@ -3,7 +3,7 @@ import os
 from bs4 import BeautifulSoup
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lsa import LsaSummarizer
+from sumy.summarizers.text_rank import TextRankSummarizer
 
 # White House Presidential Actions page
 URL = "https://www.whitehouse.gov/presidential-actions/"
@@ -52,20 +52,42 @@ def check_for_new_executive_orders():
         print("⚠️ No executive orders found on the webpage.")
 
 def fetch_executive_order_text(link):
-    """Fetches the full text of the executive order from the White House website."""
+    """Fetches and extracts the full text of an executive order from the White House website."""
     response = requests.get(link)
     soup = BeautifulSoup(response.text, "html.parser")
-    
-    content_div = soup.find("div", class_="wp-block-post-content")  # Adjust if needed
-    if content_div:
-        paragraphs = content_div.find_all("p")
-        return " ".join(p.get_text(strip=True) for p in paragraphs)
 
-def summarize_executive_order(text):
-    """Uses Sumy to summarize the executive order text."""
+    # Locate the main article content
+    content_div = soup.find("div", class_="wp-block-post-content")
+    if not content_div:
+        content_div = soup.find("div", class_="entry-content")  # Alternative selector
+
+    if content_div:
+        paragraphs = content_div.find_all("p")  # Extract all paragraphs
+        extracted_text = []
+
+        for p in paragraphs:
+            text = p.get_text(strip=True)
+            extracted_text.append(text)
+
+        # Join paragraphs into a full document text
+        full_text = "\n".join(extracted_text)
+        
+        # Ensure text is long enough for summarization
+        if len(full_text.split()) < 50:  # If too short, return full text instead
+            return full_text
+        
+        return full_text
+
+    return "Full text not available."
+
+def summarize_executive_order(text, num_sentences=3):
+    """Generates a summary with a sentence count limited between 1 and 6."""
+    num_sentences = max(1, min(num_sentences, 6))  # Ensure sentence count is between 1 and 6
     parser = PlaintextParser.from_string(text, Tokenizer("english"))
-    summarizer = LsaSummarizer()
-    summary = summarizer(parser.document, 3)  # Summarize to 3 sentences
+    summarizer = TextRankSummarizer()  # Use TextRank for improved coherence
+    summary = summarizer(parser.document, num_sentences)
+
+    # Join the summarized sentences into a paragraph
     return " ".join(str(sentence) for sentence in summary)
 
 def send_notifications(title, link, summary):
