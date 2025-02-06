@@ -56,10 +56,10 @@ def fetch_executive_order_text(link):
     response = requests.get(link)
     soup = BeautifulSoup(response.text, "html.parser")
     
-    content_div = soup.find("div", class_="wp-block-whitehouse-post-template__content")  # Adjust selector if needed
+    content_div = soup.find("div", class_="wp-block-post-content")  # Adjust if needed
     if content_div:
-        return content_div.get_text(separator=" ", strip=True)
-    return "Full text not available."
+        paragraphs = content_div.find_all("p")
+        return " ".join(p.get_text(strip=True) for p in paragraphs)
 
 def summarize_executive_order(text):
     """Uses Sumy to summarize the executive order text."""
