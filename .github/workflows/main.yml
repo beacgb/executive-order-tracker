@@ -1,55 +1,30 @@
-name: Executive Order Tracker
+name: Check for New Executive Orders
 
 on:
   schedule:
     - cron: '*/5 * * * *'  # Runs every 5 minutes
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:  # Allows manual execution
 
 jobs:
-  run-tracker:
-    runs-on: ubuntu-latest  # Default GitHub Actions runner
+  check_executive_orders:
+    runs-on: ubuntu-latest
     steps:
-      # Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      # Set up Python environment
-      - name: Set up Python
+      - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      # Cache Python dependencies
-      - name: Cache Python dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('.github/workflows/executive_order_tracker.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4
 
-      # Install only required dependencies
-      - name: Install dependencies
-        run: |
-          pip install --prefer-binary requests beautifulsoup4 sumy nltk numpy
-          python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab')"  # Download missing NLTK data
-      
-      # Cache last detected executive order title
-      - name: Restore last executive order title
-        uses: actions/cache@v3
-        with:
-          path: last_executive_order.txt
-          key: executive-order-${{ github.run_id }}
-          restore-keys: |
-            executive-order-
-      
-      # Run the executive order tracker script
-      - name: Run tracker script
-        run: python executive_order_checker.py
-      
-      # Cache the last detected order after script execution
-      - name: Save last executive order title
-        uses: actions/cache@v3
-        with:
-          path: last_executive_order.txt
-          key: executive-order-${{ github.run_id }}
+      - name: Run Script
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python check_executive_order.py
